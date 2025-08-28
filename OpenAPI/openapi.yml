@@ -1,0 +1,671 @@
+openapi: 3.0.1
+info:
+  title: Habit Tracker API
+  version: 1.0.0
+  description: API for managing users and their habits
+
+servers:
+  - url: http://localhost:8081
+    description: Local development server
+
+tags:
+  - name: Habit
+    description: Operations related to habits
+  - name: User
+    description: Operations related to users
+  # - name: Admin
+  #   description: Operations related to admins
+
+paths:
+  /user:
+    get:
+      tags: [User]
+      summary: Get current authenticated user
+      operationId: getCurrentUser
+      responses:
+        '200':
+          description: User details (public)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserPublicResponse'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+    patch:
+      tags: [User]
+      summary: Update current authenticated user
+      operationId: updateCurrentUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserUpdateRequest'
+      responses:
+        '200':
+          description: User updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+    delete:
+      tags: [User]
+      summary: Delete current authenticated user
+      operationId: deleteCurrentUser
+      responses:
+        '200':
+          description: User deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+
+  /admin/users:
+    get:
+      tags: [User]
+      summary: Get all users (ADMIN)
+      operationId: getAllUsers
+      responses:
+        '200':
+          description: List of all users (public fields with IDs)
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserPublicResponse'
+
+  /admin/search/phone:
+    get:
+      tags: [User]
+      summary: Get user by phone number (public fields only)
+      operationId: userSearchPhoneGet
+      parameters:
+        - name: phone
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: User found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserPublicResponse'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+
+  # ---------------------- HABITS ----------------------
+
+  /habits:
+    post:
+      tags: [Habit]
+      summary: Create a new habit for the current authenticated user
+      operationId: createHabit
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/HabitCreateRequest"
+      responses:
+        '201':
+          description: Habit created successfully (includes ID)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HabitPublicResponse"
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+
+    get:
+      tags: [Habit]
+      summary: Get all habits for the current authenticated user
+      operationId: getHabits
+      responses:
+        '200':
+          description: List of user's habits (includes IDs)
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/HabitPublicResponse"
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+
+  /habits/{id}:
+    get:
+      tags: [Habit]
+      summary: Get a habit by ID for the current authenticated user
+      operationId: getHabitById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+
+      responses:
+        '200':
+          description: Habit retrieved successfully (includes ID)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HabitDetailsResponse"
+        '403':
+          description: Access denied - habit does not belong to user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        '404':
+          description: Habit not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+
+    patch:
+      tags: [Habit]
+      summary: Update a habit by ID for the current authenticated user
+      operationId: updateHabit
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/HabitUpdateRequest"
+      responses:
+        '200':
+          description: Habit updated successfully (message + new values)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HabitUpdateResponse"
+        '403':
+          description: Access denied - habit does not belong to user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        '404':
+          description: Habit not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        '409':
+          description: Cannot update habit - has ongoing habits with active status
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+
+    delete:
+      tags: [Habit]
+      summary: Delete a habit by ID for the current authenticated user
+      operationId: deleteHabit
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+
+      responses:
+        '200':
+          description: Habit deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        '403':
+          description: Access denied - habit does not belong to user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        '404':
+          description: Habit not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+
+  # ---------------------- ONGOING HABITS ----------------------
+
+  /ongoing-habit:
+    get:
+      tags: [OngoingHabit]
+      summary: Get all ongoing habits
+      operationId: getAllOngoingHabitsByUser
+      responses:
+        '200':
+          description: List of all ongoing habits (includes IDs)
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OngoingHabitResponse'
+    post:
+      tags: [OngoingHabit]
+      summary: Create an ongoing habit
+      operationId: createOngoingHabit
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OngoingHabitCreateRequest'
+      responses:
+        '201':
+          description: Ongoing habit created (includes ID)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OngoingHabitResponse'
+
+  /ongoing-habit/{id}:
+    get:
+      tags: [OngoingHabit]
+      summary: Get ongoing habit by ID
+      operationId: getOngoingHabitById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+
+      responses:
+        '200':
+          description: Ongoing habit found (includes ID)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OngoingHabitResponse'
+        '404':
+          description: Ongoing habit not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+    put:
+      tags: [OngoingHabit]
+      summary: Update an ongoing habit
+      operationId: updateOngoingHabit
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OngoingHabitUpdateRequest'
+      responses:
+        '200':
+          description: Ongoing habit updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OngoingHabitResponse'
+        '404':
+          description: Ongoing habit not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+        '409':
+          description: Conflict updating habit
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+
+    delete:
+      tags: [OngoingHabit]
+      summary: Delete an ongoing habit
+      operationId: deleteOngoingHabit
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: string
+            x-java-type: java.lang.String
+      responses:
+        '204':
+          description: Habit deleted successfully
+        '404':
+          description: Ongoing habit not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+
+  /ongoing-habit/{id}/check-off:
+    post:
+      tags: [OngoingHabit]
+      summary: Check off an ongoing habit
+      operationId: checkOffOngoingHabit
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OngoingHabitCheckOffRequest'
+      responses:
+        '200':
+          description: Habit checked off successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OngoingHabitResponse'
+        '400':
+          description: Invalid operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+        '404':
+          description: Habit not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+
+  /progress:
+    get:
+      tags: [Habit]
+      summary: Get overall progress with optional filters (habitId and/or status)
+      operationId: progressGet
+      parameters:
+        - name: habitId
+          in: query
+          description: Filter by specific habit ID
+          required: false
+          schema:
+            type: string
+            format: uuid
+
+        - name: status
+          in: query
+          description: Filter by status (e.g., COMPLETED, IN_PROGRESS)
+          required: false
+          schema:
+            type: string
+            enum: [INCOMPLETE, IN_PROGRESS, COMPLETED]
+      responses:
+        '200':
+          description: Progress data matching filter criteria
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProgressResponse'
+        '400':
+          description: Invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+
+components:
+  schemas:
+    UserPublicResponse:
+      type: object
+      properties:
+        userId:
+          type: string
+          format: uuid
+        role:
+          type: string
+          enum: [ADMIN, USER]
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        phoneNumber:
+          type: string
+
+    HabitPublicResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        target:
+          type: integer
+        frequency:
+          type: string
+          enum: [DAILY, WEEKLY, MONTHLY]
+        progress:
+          type: number
+          format: double
+
+    HabitDetailsResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        frequency:
+          type: string
+          enum: [DAILY, WEEKLY, MONTHLY]
+        target:
+          type: integer
+        progress:
+          type: number
+          format: double
+        status:
+          type: string
+          enum: [NOT_STARTED, IN_PROGRESS, COMPLETED]
+
+    ProgressResponse:
+      type: object
+      properties:
+        habitId:
+          type: string
+          format: uuid
+          nullable: true
+        status:
+          type: string
+          enum: [INCOMPLETE, IN_PROGRESS, COMPLETED]
+          nullable: true
+        progressPercentage:
+          type: string
+          example: "50%"
+
+    HabitUpdateResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        name:
+          type: string
+        target:
+          type: integer
+        frequency:
+          type: string
+          enum: [DAILY, WEEKLY, MONTHLY]
+
+    OngoingHabitResponse:
+      type: object
+      properties:
+        ongoingHabitId:
+          type: string
+          format: uuid
+          description: "The unique ID of the ongoing habit"
+        habitId:
+          type: string
+          format: uuid
+          description: "The unique ID of the habit"
+        habitName:
+          type: string
+          description: "Name of the habit"
+        counter:
+          type: integer
+          description: "Current progress counter"
+        status:
+          type: string
+          description: "Current status of the ongoing habit"
+          enum:
+            - NOT_STARTED
+            - STARTED
+            - IN_PROGRESS
+            - COMPLETED
+            - CANCELLED
+        target:
+          type: integer
+          description: "Target goal for the habit"
+      required:
+        - ongoingHabitId
+        - habitId
+        - habitName
+        - counter
+        - status
+        - target
+
+    User:
+      type: object
+      required: [role, name, email, password]
+      properties:
+        userId:
+          type: string
+          format: uuid
+        role:
+          type: string
+          enum: [ADMIN, USER]
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+        phoneNumber:
+          type: string
+
+    UserUpdateRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+        phoneNumber:
+          type: string
+
+    HabitCreateRequest:
+      type: object
+      required: [name, frequency, target]
+      properties:
+        name:
+          type: string
+        frequency:
+          type: string
+          enum: [DAILY, WEEKLY, MONTHLY]
+        target:
+          type: integer
+
+    HabitUpdateRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        target:
+          type: integer
+        frequency:
+          type: string
+          enum: [DAILY, WEEKLY, MONTHLY]
+
+    OngoingHabitCreateRequest:
+      type: object
+      required: [habitId, startDate]
+      properties:
+        habitId:
+          type: string
+          format: uuid
+        startDate:
+          type: string
+          format: date
+
+    OngoingHabitCheckOffRequest:
+      type: object
+      required: [increment]
+      properties:
+        increment:
+          type: integer
+          minimum: 1
+          default: 1
+
+    OngoingHabitUpdateRequest:
+      type: object
+      properties:
+        startDate:
+          type: string
+          format: date
+
+    MessageResponse:
+      type: object
+      properties:
+        message:
+          type: string
