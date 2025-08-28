@@ -1,8 +1,8 @@
 import React from 'react';
 import { Navbar } from './Navbar';
 import { Sidebar } from './Sidebar';
-import { useAuth } from '../../contexts/AuthContext';
-import { LoadingSpinner } from '../ui/loading-spinner';
+import { useAuth } from '@/contexts/AuthContext';
+import { LoadingSpinner } from '@/components/ui/loading-spinner';
 
 interface LayoutProps {
   children: React.ReactNode;

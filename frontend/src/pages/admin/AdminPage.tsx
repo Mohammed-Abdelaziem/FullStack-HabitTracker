@@ -2,15 +2,15 @@ import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import { Users, Search, Shield, Mail, Phone } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
-import { Input } from '../../components/ui/input';
-import { Label } from '../../components/ui/label';
-import { Button } from '../../components/ui/button';
-import { Badge } from '../../components/ui/badge';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../components/ui/table';
-import { LoadingSpinner } from '../../components/ui/loading-spinner';
-import { userApi } from '../../lib/api';
-import { User } from '../../types/api';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { LoadingSpinner } from '@/components/ui/loading-spinner';
+import { userApi } from '@/lib/api';
+import { User } from '@/types/api';
 import toast from 'react-hot-toast';
 
 export const AdminPage: React.FC = () => {

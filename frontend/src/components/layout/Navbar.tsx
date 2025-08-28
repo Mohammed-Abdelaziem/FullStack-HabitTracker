@@ -1,15 +1,15 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Button } from '../ui/button';
-import { Avatar, AvatarFallback } from '../ui/avatar';
+import { Button } from '@/components/ui/button';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { 
   DropdownMenu, 
   DropdownMenuContent, 
   DropdownMenuItem, 
   DropdownMenuSeparator, 
   DropdownMenuTrigger 
-} from '../ui/dropdown-menu';
-import { useAuth } from '../../contexts/AuthContext';
+} from '@/components/ui/dropdown-menu';
+import { useAuth } from '@/contexts/AuthContext';
 import { LogOut, User, Settings, Target } from 'lucide-react';
 import { motion } from 'framer-motion';
 

@@ -2,11 +2,11 @@ import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import { Target, TrendingUp, Calendar, CheckCircle } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
-import { Badge } from '../components/ui/badge';
-import { LoadingSpinner } from '../components/ui/loading-spinner';
-import { useAuth } from '../contexts/AuthContext';
-import { habitsApi, ongoingHabitsApi } from '../lib/api';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { LoadingSpinner } from '@/components/ui/loading-spinner';
+import { useAuth } from '@/contexts/AuthContext';
+import { habitsApi, ongoingHabitsApi } from '@/lib/api';
 
 export const DashboardPage: React.FC = () => {
   const { user } = useAuth();

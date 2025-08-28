@@ -2,11 +2,13 @@ import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import { BarChart3, TrendingUp, Calendar, Target } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
-import { Badge } from '../components/ui/badge';
-import { LoadingSpinner } from '../components/ui/loading-spinner';
-import { habitsApi } from '../lib/api';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Badge } from '@/components/ui/badge';
+import { LoadingSpinner } from '@/components/ui/loading-spinner';
+import { Label } from '@/components/ui/label';
+import { Button } from '@/components/ui/button';
+import { habitsApi } from '@/lib/api';
 
 export const ProgressPage: React.FC = () => {
   const [selectedHabitId, setSelectedHabitId] = useState<string>('');

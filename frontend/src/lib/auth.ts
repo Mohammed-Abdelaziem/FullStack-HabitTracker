@@ -1,5 +1,5 @@
 import Cookies from 'js-cookie';
-import { User } from '../types/api';
+import { User } from '@/types/api';
 
 export const AUTH_TOKEN_KEY = 'auth-token';
 
